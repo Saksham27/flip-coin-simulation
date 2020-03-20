@@ -7,6 +7,7 @@ NO_OF_SIMULATIONS=10
 # declaring dictionary
 declare -A singletData
 declare -A doubletData
+declare -A tripletData
 
 # variables
 HCount=0
@@ -21,6 +22,22 @@ HHPercentage=0
 HTPercentage=0
 THPercentage=0
 TTPercentage=0
+HHHCount=0
+HHTCount=0
+HTHCount=0
+HTTCount=0
+THHCount=0
+THTCount=0
+TTHCount=0
+TTTCount=0
+HHHPercentage=0
+HHTPercentage=0
+HTHPercentage=0
+HTTPercentage=0
+THHPercentage=0
+THTPercentage=0
+TTHPercentage=0
+TTTPercentage=0
 
 # function to flip coin
 function flipCoin() {
@@ -31,6 +48,11 @@ function flipCoin() {
 	else
 		echo "T"
 	fi
+}
+
+# fucntion to calculate percentage
+function percentage() {
+	echo "scale=2; ($1/$NO_OF_SIMULATIONS)*100" | bc
 }
 
 # simulating singlet coin flip
@@ -46,8 +68,8 @@ do
 	fi
 done
 
-HPercentage=`echo "scale=2; ($HCount/$NO_OF_SIMULATIONS)*100" | bc` # singlet Head percentage
-TPercentage=`echo "scale=2; ($TCount/$NO_OF_SIMULATIONS)*100" | bc` # singlet Tail percentage
+HPercentage=$( percentage $HCount ) # singlet Head percentage
+TPercentage=$( percentage $TCount ) # singlet Tail percentage
 
 # simulating doublet coin flip
 for (( i=1; i<=$NO_OF_SIMULATIONS; i++ ))
@@ -63,7 +85,32 @@ do
 	fi
 done
 
-HHPercentage=`echo "scale=2; ($HHCount/$NO_OF_SIMULATIONS)*100" | bc` # doublet HeadHead percentage
-HTPercentage=`echo "scale=2; ($HTCount/$NO_OF_SIMULATIONS)*100" | bc` # doublet HeadTail percentage
-HTPercentage=`echo "scale=2; ($THCount/$NO_OF_SIMULATIONS)*100" | bc` # doublet TailHead percentage
-HTPercentage=`echo "scale=2; ($TTCount/$NO_OF_SIMULATIONS)*100" | bc` # doublet TailTail percentage
+HHPercentage=$( percentage $HHCount ) # doublet HeadHead percentage
+HTPercentage=$( percentage $HTCount ) # doublet HeadTail percentage
+HTPercentage=$( percentage $THCount ) # doublet TailHead percentage
+HTPercentage=$( percentage $TTCount ) # doublet TailTail percentage
+
+# simulating triplet coin flip
+for (( i=1; i<=$NO_OF_SIMULATIONS; i++ ))
+do
+	temp1=$( flipCoin )
+	temp2=$( flipCoin )
+	temp3=$( flipCoin )
+	(( "$temp1""$temp2""$temp3"Count++ ))
+	if  [ tripletData["$temp1""$temp2""$temp3"] ]
+	then
+		(( tripletData["$temp1""$temp2""$temp3"]++ ))
+	else
+		tripletData["$temp1""$temp2""$temp3"]=1
+	fi
+done
+
+HHHPercentage=$( percentage $HHHCount ) # triplet HeadHeadHead percentage
+HHTPercentage=$( percentage $HHTCount ) # triplet HeadHeadTail percentage
+HTHPercentage=$( percentage $HTHCount ) # triplet HeadTailHead percentage
+HTTPercentage=$( percentage $HTTCount ) # triplet HeadTailTail percentage
+THHPercentage=$( percentage $THHCount ) # triplet TailHeadHead percentage
+THTPercentage=$( percentage $THTCount ) # triplet TailHeadTail percentage
+TTHPercentage=$( percentage $TTHCount ) # triplet TailTailHead percentage
+TTTPercentage=$( percentage $TTTCount ) # triplet TailTailTail percentage
+
