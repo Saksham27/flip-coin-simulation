@@ -9,6 +9,11 @@ declare -A singletData
 declare -A doubletData
 declare -A tripletData
 
+# declaring array
+declare -a singletArray
+declare -a doubletArray
+declare -a tripletArray
+
 # variables
 HCount=0
 TCount=0
@@ -38,6 +43,13 @@ THHPercentage=0
 THTPercentage=0
 TTHPercentage=0
 TTTPercentage=0
+singletArrLen=0
+doubletArrLen=0
+tripletArrLen=0
+
+singletWinningComb=0
+doubletWinningComb=0
+tripletWinningComb=0
 
 # function to flip coin
 function flipCoin() {
@@ -51,8 +63,35 @@ function flipCoin() {
 }
 
 # fucntion to calculate percentage
+# param1 : element whose percentage you want
 function percentage() {
 	echo "scale=2; ($1/$NO_OF_SIMULATIONS)*100" | bc
+}
+
+# fucntion to sort the results in descending order
+# param 1 : array which you want to sort
+function sortDescending() {
+
+	# local constant
+	TRUE=1
+
+	# local variables
+	local tempArray=("$@")
+
+	for (( i=0; i<$(( ${#tempArray[@]}-1 )); i++ ))
+	do
+		for (( j=0; j<$(( ${#tempArray[@]}-1-$i )); j++ ))
+		do
+			if [ $(echo "${tempArray[$j]} <= ${tempArray[$j+1]}" | bc -l) -eq $TRUE ]
+			then
+				temp=${tempArray[$j]}
+				tempArray[$j]=${tempArray[$j+1]}
+				tempArray[$j+1]=$temp
+			fi
+		done
+	done
+
+	echo ${tempArray[@]}
 }
 
 # simulating singlet coin flip
@@ -71,6 +110,22 @@ done
 HPercentage=$( percentage $HCount ) # singlet Head percentage
 TPercentage=$( percentage $TCount ) # singlet Tail percentage
 
+for var in ${!singletData[@]} # storing in array to sort
+do
+	singletArray[$singletArrLen]=${singletData[$var]}
+done
+
+singletArray=$( sortDescending ${singletArray[@]} ) # sorting the array
+
+for var in ${!singletData[@]}
+do
+	if [ ${singletArray[0]} = ${singletData[$var]} ] # getting the Winning combination
+	then
+		 singletWinningcomb=$var
+		break
+	fi
+done
+
 # simulating doublet coin flip
 for (( i=1; i<=$NO_OF_SIMULATIONS; i++ ))
 do
@@ -87,8 +142,24 @@ done
 
 HHPercentage=$( percentage $HHCount ) # doublet HeadHead percentage
 HTPercentage=$( percentage $HTCount ) # doublet HeadTail percentage
-HTPercentage=$( percentage $THCount ) # doublet TailHead percentage
-HTPercentage=$( percentage $TTCount ) # doublet TailTail percentage
+THPercentage=$( percentage $THCount ) # doublet TailHead percentage
+TTPercentage=$( percentage $TTCount ) # doublet TailTail percentage
+
+for var in ${!doubletData[@]} # storing in array to sort
+do
+	doubletArray[$doubletArrLen]=${doubletData[$var]}
+done
+
+doubletArray=$( sortDescending ${doubletArray[@]} ) # sorting the array
+
+for var in ${!doubletData[@]}
+do
+	if [ ${doubletArray[0]} = ${doubletData[$var]} ] # getting the Winning combination
+	then
+		 doubletWinningcomb=$var
+		break
+	fi
+done
 
 # simulating triplet coin flip
 for (( i=1; i<=$NO_OF_SIMULATIONS; i++ ))
@@ -114,3 +185,18 @@ THTPercentage=$( percentage $THTCount ) # triplet TailHeadTail percentage
 TTHPercentage=$( percentage $TTHCount ) # triplet TailTailHead percentage
 TTTPercentage=$( percentage $TTTCount ) # triplet TailTailTail percentage
 
+for var in ${!tripletData[@]} # storing in array to sort
+do
+	tripletArray[$tripletArrLen]=${tripletData[$var]}
+done
+
+tripletArray=$( sortDescending ${tripletArray[@]} ) # sorting the array
+
+for var in ${!tripletData[@]}
+do
+	if [ ${tripletArray[0]} = ${tripletData[$var]} ] # getting the Winning combination
+	then
+		 tripletWinningcomb=$var
+		break
+	fi
+done
