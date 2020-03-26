@@ -6,11 +6,7 @@ NO_OF_SIMULATIONS=10
 
 # declaring dictionary
 declare -A data
-
-# declaring array
 declare -A percentage
-
-
 
 # function to flip coin
 function flipCoin() {
@@ -28,33 +24,6 @@ function flipCoin() {
 function percentage() {
 	echo "scale=2; ($1/$NO_OF_SIMULATIONS)*100" | bc
 }
-
-# fucntion to sort the results in descending order
-# param 1 : array which you want to sort
-function sortDescending() {
-
-	# local constant
-	TRUE=1
-
-	# local variables
-	local tempArray=("$@")
-
-	for (( i=0; i<$(( ${#tempArray[@]}-1 )); i++ ))
-	do
-		for (( j=0; j<$(( ${#tempArray[@]}-1-$i )); j++ ))
-		do
-			if [ $(echo "${tempArray[$j]} <= ${tempArray[$j+1]}" | bc -l) -eq $TRUE ]
-			then
-				temp=${tempArray[$j]}
-				tempArray[$j]=${tempArray[$j+1]}
-				tempArray[$j+1]=$temp
-			fi
-		done
-	done
-
-	echo ${tempArray[@]}
-}
-
 
 #function to simulate singlet, doublet or triplate coin flip
 # param1 : singlet, doublet or triplet
